@@ -1,11 +1,11 @@
 <?php
-// connection a ma base de donne tp_1
+//connection a la bd 
 $host = "localhost";
 $db = "tp_1";
 $user = "root";
 $password = "";
 
-$dsn = "mysql:host=$host;dbname=$db;charset=UTF8"; 
+$dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
 
 try {
     $pdo = new PDO($dsn, $user, $password);
@@ -16,12 +16,14 @@ try {
     echo $e->getMessage();
 }
 
-require_once('class/crud.php');
+require_once('class/Crud.php');
 require_once('class/Horloge.php');
 
 // creer un objet crud 
 $crud = new Crud($pdo);
 
+// creeation d un objet horloge 
+$horlogeObj = new Horloge();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
@@ -32,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'model' => $_POST['model'],
                 'price' => $_POST['price']
             ];
-            $resultatAjout = $crud->ajouterHorloge($nouvelleHorloge);
+            $resultatAjout = $horlogeObj->ajouterHorloge($nouvelleHorloge);
             if ($resultatAjout) {
                 echo "Horloge ajoutée avec l'ID : $resultatAjout";
             } else {
@@ -46,11 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'model' => $_POST['model'],
                 'price' => $_POST['price']
             ];
-            $crud->updateHorlogeById($idHorloge, $horlogeModifiee);
+            $horlogeObj->updateHorlogeById($idHorloge, $horlogeModifiee);
             echo "Horloge mise à jour avec succès.";
         } elseif ($_POST['action'] === 'supprimer') {
             $idHorloge = $_POST['id'];
-            $resultatSuppression = $crud->deleteHorlogeById($idHorloge);
+            $resultatSuppression = $horlogeObj->deleteHorlogeById($idHorloge);
             echo $resultatSuppression;
         }
     }
@@ -65,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <h1>Gestion des Horloges</h1>
 
-    <!-- formulaire pour afficher tt mes produits de la table horloge   -->
+    <!-- liste de mes items  -->
     <h2>Liste des Horloges</h2>
     <ul>
         <?php
@@ -76,8 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         ?>
     </ul>
-<!-- formulaire pour afficher un item selon son id  -->
-   
+
+    <!-- afficher une orloge avec son id  -->
     <h2>Rechercher l'horloge avec son ID</h2>
     <form method="get" action="index.php">
         <label>ID de l'Horloge:</label>
@@ -98,37 +100,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     ?>
 
-    <!-- formulaire pour ajouter une horloge -->
+    <!-- Ajouter une Horloge -->
     <h2>Ajouter une Horloge</h2>
     <form method="post" action="index.php">
         <label>Marque:</label>
         <input type="text" name="brand">
         <label>Type:</label>
         <input type="text" name="type">
-        <label>Modele:</label>
+        <label>Modèle:</label>
         <input type="text" name="model">
         <label>Prix:</label>
         <input type="text" name="price">
         <input type="submit" name="action" value="ajouter">
     </form>
 
-    <!-- formulaire pour la modification d un item  -->
-    <h2>modifier une Horloge</h2>
+    <!-- Modifier une Horloge -->
+    <h2>Modifier une Horloge</h2>
     <form method="post" action="index.php">
-        <label>Id de l horloge a modifier :</label>
+        <label>ID de l'horloge à modifier:</label>
         <input type="text" name="id">
         <label>Nouvelle Marque:</label>
         <input type="text" name="brand">
         <label>Nouveau Type:</label>
         <input type="text" name="type">
-        <label>Nouveau Modele:</label>
+        <label>Nouveau Modèle:</label>
         <input type="text" name="model">
         <label>Nouveau Prix:</label>
         <input type="text" name="price">
-        <input type="submit" name="action" value="Modifier">
+        <input type="submit" name="action" value="éditer">
     </form>
 
-    <!-- formulaire pour supprimer un item selon son id  -->
+    <!-- Supprimer une Horloge -->
     <h2>Supprimer une Horloge</h2>
     <form method="post" action="index.php">
         <label>ID de l'Horloge à supprimer:</label>
